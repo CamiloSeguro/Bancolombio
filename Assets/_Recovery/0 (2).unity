@@ -177,8 +177,8 @@ RectTransform:
   m_GameObject: {fileID: 37238550}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.3, y: 2.3, z: 2.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 785300526}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -915,8 +915,8 @@ RectTransform:
   m_GameObject: {fileID: 353839549}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.3, y: 2.3, z: 2.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 785300526}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1492,12 +1492,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 592729368}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.33189988, y: -0.0020000285, z: -0.019199967}
+  m_LocalRotation: {x: -0.00000014106499, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.25696492, y: -0.0020000339, z: -0.019199967}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7284908877517100849}
+  m_Father: {fileID: 543450653210377303}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &592729370
 MonoBehaviour:
@@ -2085,8 +2085,8 @@ RectTransform:
   m_GameObject: {fileID: 1046492105}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.3, y: 2.3, z: 2.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 785300526}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2796,8 +2796,8 @@ RectTransform:
   m_GameObject: {fileID: 2028238657}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.3, y: 2.3, z: 2.3}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 785300526}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2958,6 +2958,7 @@ Transform:
   - {fileID: 588122926617125430}
   - {fileID: 7521623597729765017}
   - {fileID: 1810940067416221076}
+  - {fileID: 592729369}
   - {fileID: 7284908877517100849}
   - {fileID: 81237563042765214}
   - {fileID: 1033739796025543594}
@@ -3140,8 +3141,6 @@ GameObject:
   - component: {fileID: 1786761675}
   - component: {fileID: 8936330513926808176}
   - component: {fileID: 8936330513926808177}
-  - component: {fileID: 8936330513926808178}
-  - component: {fileID: 8936330513926808179}
   m_Layer: 0
   m_Name: Palanca
   m_TagString: Untagged
@@ -3467,19 +3466,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotMachine
   reels:
-  - {fileID: 37238551}
-  - {fileID: 1046492106}
-  - {fileID: 2028238658}
-  - {fileID: 353839550}
+  - {fileID: 37238552}
+  - {fileID: 1046492107}
+  - {fileID: 2028238659}
+  - {fileID: 353839551}
   symbols:
   - {fileID: -632527851, guid: 1b910183dfe9c8d409617cfa0db71e3c, type: 3}
   - {fileID: -1743155701, guid: d88a0523f4de3614ea406cd9cfdd8063, type: 3}
   - {fileID: 1199288837, guid: 5029a9441463f1e4582d1719b4f013d6, type: 3}
   - {fileID: 448870375, guid: c0b07ab5fc5fe374bab295d10306889e, type: 3}
   spinDuration: 2
-  symbolChangeSpeed: 0.05
-  spinMoveAmount: 40
-  isSpinning: 0
+  spinSpeed: 0.1
 --- !u!23 &6683096742086818721
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3657,8 +3654,7 @@ Transform:
   m_LocalPosition: {x: 0.07493496, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 592729369}
+  m_Children: []
   m_Father: {fileID: 543450653210377303}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &7521623597729765017
@@ -3701,10 +3697,10 @@ MonoBehaviour:
   _constraints:
     MinAngle:
       Constrain: 1
-      Value: 0
+      Value: -45
     MaxAngle:
       Constrain: 1
-      Value: 65
+      Value: 45
 --- !u!114 &8936330513926808177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3717,36 +3713,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5523ed7c457a47346800db6da0679552, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LeverSlotTrigger
-  grabbable: {fileID: 1786761676}
-  returnSpeed: 6
---- !u!114 &8936330513926808178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2428148761023416454}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21ee5ebd4cb942746aac6f0fa7c60710, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LeverPositionLock
-  maxAngle: 65
-  grabbable: {fileID: 0}
---- !u!114 &8936330513926808179
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2428148761023416454}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd087cfd68e0f7642bd0c8b72f9dbe78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LeverSlotTrigger
-  grabbable: {fileID: 1786761676}
-  rotateTarget: {fileID: 7284908877517100849}
+  lever: {fileID: 7284908877517100849}
+  triggerAngle: 30
   slotMachine: {fileID: 6241936147751317721}
 --- !u!1 &9059973098371586165
 GameObject:

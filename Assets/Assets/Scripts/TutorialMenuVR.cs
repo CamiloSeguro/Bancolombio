@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class HandTutorialMenu : MonoBehaviour
+public class TutorialMenuVR : MonoBehaviour
 {
     public GameObject tutorialMenu;
     public Transform playerCamera;

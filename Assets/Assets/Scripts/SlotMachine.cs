@@ -2,34 +2,72 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class SlotMachine : MonoBehaviour
 {
-    public Image[] reels;   // 👈 ESTO es la clave
+    [Header("Reels")]
+    public RectTransform[] reels;
+
+    [Header("Symbols")]
     public Sprite[] symbols;
 
+    [Header("Settings")]
     public float spinDuration = 2f;
-    public float spinSpeed = 0.1f;
+    public float symbolChangeSpeed = 0.05f;
+    public float spinMoveAmount = 40f;
+
+    [HideInInspector]
+    public bool isSpinning = false;
+
+    private Vector2[] startPositions;
+    private Image[] reelImages;
+
+    void Start()
+    {
+        startPositions = new Vector2[reels.Length];
+        reelImages = new Image[reels.Length];
+
+        for (int i = 0; i < reels.Length; i++)
+        {
+            startPositions[i] = reels[i].anchoredPosition;
+            reelImages[i] = reels[i].GetComponent<Image>();
+        }
+    }
 
     public void StartSpin()
     {
-        StartCoroutine(Spin());
+        if (!isSpinning)
+        {
+            StartCoroutine(Spin());
+        }
     }
 
     IEnumerator Spin()
+{
+    isSpinning = true;
+
+    float timer = 0;
+
+    while (timer < spinDuration)
     {
-        float time = 0;
+        timer += Time.deltaTime;
 
-        while (time < spinDuration)
+        for (int i = 0; i < reels.Length; i++)
         {
-            time += Time.deltaTime;
+            reelImages[i].sprite = symbols[Random.Range(0, symbols.Length)];
 
-            foreach (var reel in reels)
-            {
-                reel.sprite = symbols[Random.Range(0, symbols.Length)];
-            }
-
-            yield return new WaitForSeconds(spinSpeed);
+            reels[i].anchoredPosition =
+                startPositions[i] + Vector2.down * Random.Range(0, spinMoveAmount);
         }
+
+        yield return null;
     }
+
+    // volver
+    for (int i = 0; i < reels.Length; i++)
+    {
+        reels[i].anchoredPosition = startPositions[i];
+    }
+
+    isSpinning = false;
+}
 }
