@@ -1,73 +1,115 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Events;
+
+[System.Serializable]
+public class SlotSymbol
+{
+    public Sprite sprite;
+    [Range(1, 100)]
+    public int weight = 10;
+}
 
 public class SlotMachine : MonoBehaviour
 {
     [Header("Reels")]
-    public RectTransform[] reels;
+    public SlotReelUI[] reels;
 
     [Header("Symbols")]
-    public Sprite[] symbols;
+    public SlotSymbol[] symbols;
 
     [Header("Settings")]
     public float spinDuration = 2f;
-    public float symbolChangeSpeed = 0.05f;
-    public float spinMoveAmount = 40f;
+    public float reelStopDelay = 0.5f;
+
+    [Header("Economy")]
+    public MoneyTracker moneyTracker;
+
+    [Header("Events")]
+    public UnityEvent onWin;
+    public UnityEvent onLose;
 
     [HideInInspector]
     public bool isSpinning = false;
 
-    private Vector2[] startPositions;
-    private Image[] reelImages;
-
-    void Start()
-    {
-        startPositions = new Vector2[reels.Length];
-        reelImages = new Image[reels.Length];
-
-        for (int i = 0; i < reels.Length; i++)
-        {
-            startPositions[i] = reels[i].anchoredPosition;
-            reelImages[i] = reels[i].GetComponent<Image>();
-        }
-    }
-
     public void StartSpin()
     {
-        if (!isSpinning)
-        {
-            StartCoroutine(Spin());
-        }
+        if (!isSpinning && (moneyTracker == null || moneyTracker.CanSpin()))
+            StartCoroutine(SpinSequence());
     }
 
-    IEnumerator Spin()
-{
-    isSpinning = true;
-
-    float timer = 0;
-
-    while (timer < spinDuration)
+    IEnumerator SpinSequence()
     {
-        timer += Time.deltaTime;
+        isSpinning = true;
+        moneyTracker?.PlaceBet();
 
+        Sprite[] available = GetAllSprites();
+
+        Sprite[] results = new Sprite[reels.Length];
+        for (int i = 0; i < reels.Length; i++)
+            results[i] = PickWeightedSymbol();
+
+        foreach (var reel in reels)
+            reel.StartSpin(available);
+
+        yield return new WaitForSeconds(spinDuration);
+
+        int stoppedCount = 0;
         for (int i = 0; i < reels.Length; i++)
         {
-            reelImages[i].sprite = symbols[Random.Range(0, symbols.Length)];
+            reels[i].Stop(results[i], () => stoppedCount++);
 
-            reels[i].anchoredPosition =
-                startPositions[i] + Vector2.down * Random.Range(0, spinMoveAmount);
+            if (i < reels.Length - 1)
+                yield return new WaitForSeconds(reelStopDelay);
         }
 
-        yield return null;
+        yield return new WaitUntil(() => stoppedCount >= reels.Length);
+
+        CheckWin(results);
+        isSpinning = false;
     }
 
-    // volver
-    for (int i = 0; i < reels.Length; i++)
+    Sprite PickWeightedSymbol()
     {
-        reels[i].anchoredPosition = startPositions[i];
+        if (symbols == null || symbols.Length == 0) return null;
+
+        int totalWeight = 0;
+        foreach (var s in symbols) totalWeight += s.weight;
+
+        int roll = Random.Range(0, totalWeight);
+        int accumulated = 0;
+
+        foreach (var s in symbols)
+        {
+            accumulated += s.weight;
+            if (roll < accumulated) return s.sprite;
+        }
+
+        return symbols[symbols.Length - 1].sprite;
     }
 
-    isSpinning = false;
-}
+    Sprite[] GetAllSprites()
+    {
+        if (symbols == null || symbols.Length == 0) return new Sprite[0];
+
+        Sprite[] result = new Sprite[symbols.Length];
+        for (int i = 0; i < symbols.Length; i++)
+            result[i] = symbols[i].sprite;
+        return result;
+    }
+
+    void CheckWin(Sprite[] results)
+    {
+        for (int i = 1; i < results.Length; i++)
+        {
+            if (results[i] != results[0])
+            {
+                onLose.Invoke();
+                return;
+            }
+        }
+
+        moneyTracker?.Win();
+        onWin.Invoke();
+    }
 }

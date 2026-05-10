@@ -5,13 +5,15 @@ using System.Collections;
 public class SlotReelUI : MonoBehaviour
 {
     public RectTransform[] icons;
-    public Sprite[] sprites;
-
-    public float speed = 600f;
+    public float speed = 800f;
     public float iconSpacing = 200f;
+    public float decelerationDuration = 0.8f;
 
-    private bool spinning = false;
     private Image[] iconImages;
+    private bool spinning;
+    private bool stopping;
+    private Sprite resultSprite;
+    private System.Action onStopped;
 
     void Start()
     {
@@ -20,58 +22,108 @@ public class SlotReelUI : MonoBehaviour
             iconImages[i] = icons[i].GetComponent<Image>();
     }
 
-    public void StartSpin(float duration)
+    public void StartSpin(Sprite[] available)
     {
         if (!spinning)
-            StartCoroutine(Spin(duration));
+            StartCoroutine(SpinCoroutine(available));
     }
 
-    IEnumerator Spin(float duration)
+    public void Stop(Sprite result, System.Action callback)
+    {
+        if (!spinning)
+        {
+            callback?.Invoke();
+            return;
+        }
+
+        resultSprite = result;
+        onStopped = callback;
+        stopping = true;
+    }
+
+    IEnumerator SpinCoroutine(Sprite[] available)
     {
         spinning = true;
+        stopping = false;
+        float currentSpeed = speed;
+        float decelTimer = 0f;
+        bool resultAssigned = false;
 
-        float timer = 0f;
-
-        while (timer < duration)
+        while (spinning)
         {
-            foreach (RectTransform icon in icons)
+            if (stopping)
             {
-                icon.anchoredPosition -= Vector2.up * speed * Time.deltaTime;
+                decelTimer += Time.deltaTime;
+                currentSpeed = Mathf.Lerp(speed, 0f, decelTimer / decelerationDuration);
+            }
 
-                // Si sale por abajo
-                if (icon.anchoredPosition.y < -iconSpacing)
+            for (int i = 0; i < icons.Length; i++)
+            {
+                icons[i].anchoredPosition -= Vector2.up * currentSpeed * Time.deltaTime;
+
+                if (icons[i].anchoredPosition.y < -iconSpacing)
                 {
-                    // mover arriba
-                    float highestY = GetHighestY();
-                    icon.anchoredPosition = new Vector2(
-                        icon.anchoredPosition.x,
-                        highestY + iconSpacing
+                    icons[i].anchoredPosition = new Vector2(
+                        icons[i].anchoredPosition.x,
+                        GetHighestY() + iconSpacing
                     );
 
-                    int idx = System.Array.IndexOf(icons, icon);
-                    iconImages[idx].sprite = sprites[Random.Range(0, sprites.Length)];
+                    if (stopping && !resultAssigned)
+                    {
+                        iconImages[i].sprite = resultSprite;
+                        resultAssigned = true;
+                    }
+                    else
+                    {
+                        iconImages[i].sprite = available[Random.Range(0, available.Length)];
+                    }
                 }
             }
 
-            timer += Time.deltaTime;
+            if (stopping && currentSpeed < 5f)
+            {
+                SnapToGrid();
+                spinning = false;
+            }
+
             yield return null;
         }
 
-        spinning = false;
+        onStopped?.Invoke();
+    }
+
+    void SnapToGrid()
+    {
+        int centerIdx = 0;
+        float minDist = float.MaxValue;
+        for (int i = 0; i < icons.Length; i++)
+        {
+            float dist = Mathf.Abs(icons[i].anchoredPosition.y);
+            if (dist < minDist) { minDist = dist; centerIdx = i; }
+        }
+
+        iconImages[centerIdx].sprite = resultSprite;
+        icons[centerIdx].anchoredPosition = new Vector2(icons[centerIdx].anchoredPosition.x, 0);
+
+        int slot = 0;
+        for (int i = 0; i < icons.Length; i++)
+        {
+            if (i == centerIdx) continue;
+            icons[i].anchoredPosition = new Vector2(
+                icons[i].anchoredPosition.x,
+                slot == 0 ? iconSpacing : -iconSpacing
+            );
+            slot++;
+        }
     }
 
     float GetHighestY()
     {
         if (icons == null || icons.Length == 0) return 0f;
-
         float highest = icons[0].anchoredPosition.y;
-
-        foreach (RectTransform icon in icons)
-        {
-            if (icon.anchoredPosition.y > highest)
-                highest = icon.anchoredPosition.y;
-        }
-
+        for (int i = 1; i < icons.Length; i++)
+            if (icons[i].anchoredPosition.y > highest)
+                highest = icons[i].anchoredPosition.y;
         return highest;
     }
 }
