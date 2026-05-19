@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(ls \"$env:LOCALAPPDATA\\\\Unity\\\\Editor\" | Select-Object Name -First 10)",
+      "PowerShell(Get-ChildItem *)"
+    ]
+  }
+}
